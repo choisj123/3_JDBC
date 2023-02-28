@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<comment>driver.xml</comment>
+	
+	<!--  -->
+	<!-- commend + / -->
+	
+	<!-- entry : K:V 한 쌍 -->
+	<entry key = "driver">oracle.jdbc.driver.OracleDriver</entry>
+	<entry key = "url">jdbc:oracle:thin:@localhost:1521:xe</entry>
+	<entry key = "user">member_sj</entry>
+	<entry key = "password">member1234</entry>
+					<!-- " "(공백, 스페이스바)도 인식함  -->
+	<!-- 컴파일 되지 않음  외부파일 !! -->
+	
+	
+</properties>

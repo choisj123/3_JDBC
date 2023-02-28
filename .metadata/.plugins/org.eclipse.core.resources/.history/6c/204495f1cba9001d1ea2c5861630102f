@@ -1,0 +1,112 @@
+package edu.kh.jdbc.board.model.service;
+
+import java.sql.Connection;
+import java.util.List;
+
+
+import edu.kh.jdbc.board.model.vo.Board;
+import edu.kh.jdbc.board.model.vo.Comment;
+import edu.kh.jdbc.board.model.dao.BoardDAO;
+import edu.kh.jdbc.member.model.vo.Member;
+
+import static edu.kh.jdbc.common.JDBCTemplate.*;
+
+public class BoardService {
+	
+	private BoardDAO dao = new BoardDAO();
+	
+
+	/**1. 게시글 목록 조회 서비스
+	 * @param LoginMember
+	 * @return boardList
+	 * @throws Exception
+	 */
+	public List<Board> selectAllBoard(Member LoginMember) throws Exception{
+
+		Connection conn = getConnection();
+		
+		List<Board> boardList = dao.selectAllBoard(conn, LoginMember);
+		
+		close(conn);
+		
+		return boardList;
+	}
+
+
+	/** 2. 게시글 상세 조회 서비스
+	 * @param boardNo
+	 * @return result
+	 * @throws Exception
+	 */
+	public Board selectBoard(int boardNo) throws Exception {
+		
+		Connection conn = getConnection();
+		
+		Board result = dao.selectBoard(conn, boardNo);
+		
+		close(conn);
+		
+		return result;
+	}
+
+
+	public List<Comment> selectComment(int boardNo) throws Exception{
+		
+		Connection conn = getConnection();
+		
+		List<Comment> commentList = dao.selectComment(conn, boardNo);
+		
+		close(conn);
+		
+		return commentList;
+		
+	}
+
+
+	public int insertBoard(Member LoginMember, String boardTitle, String boardContent) throws Exception{
+		
+		Connection conn = getConnection();
+		
+		int result = dao.insertBoard(conn, LoginMember, boardTitle, boardContent);
+		
+		if(result > 0) commit(conn);
+		else rollback(conn);
+		
+		close(conn);
+		
+		return result;
+	}
+
+
+	public int insertBoard(Board board) {
+		
+		Connection conn = getConnection();
+		
+		
+		
+		// 게시글 번호 생성 dao 호출
+		// 동시에 여러 사람이 게시글을 등록하면 시퀀스가 한번에 증가하여 CURRVAL 구문을 이용하면 문제 발생
+		// -> 게시글 등록 서비스를 호출한 순서대로 
+		// 미리 게시글을 번호를 생성해서 얻어온 다음 이를 이용해 insert 진행
+		int boardNo = dao.nextBoardNo(conn);
+		
+		
+		int result = dao.insertBoard(conn, board);
+		
+		if(result > 0) commit(conn);
+		else rollback(conn);
+		
+		close(conn);
+		
+		return result;
+		
+		
+	}
+
+
+
+	
+
+	
+
+}

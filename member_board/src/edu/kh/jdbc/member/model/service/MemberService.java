@@ -1,0 +1,114 @@
+package edu.kh.jdbc.member.model.service;
+
+import java.sql.Connection;
+import java.util.List;
+
+import edu.kh.jdbc.member.model.dao.MemberDAO;
+import edu.kh.jdbc.member.model.vo.Member;
+import static edu.kh.jdbc.common.JDBCTemplate.*;
+
+public class MemberService {
+	
+	private MemberDAO dao = new MemberDAO();
+
+	/** 2. 회원 목록 조회(아이디, 이름, 성별) Service
+	 * @return memberList
+	 * @throws Exception
+	 */
+	public List<Member> selectAll() throws Exception{
+		
+		// 1. 커넥션 생성
+		Connection conn = getConnection();
+		
+		// 2. DAO 메서드 호출 후 결과 반환 받기
+		List<Member> memberList = dao.selectAll(conn);
+		
+		//3. 커넥션 반환 
+		close(conn);
+		
+		return memberList;
+	}
+
+	/** 3. 내 정보 수정(이름, 성별) 서비스
+	 * @param LoginMember
+	 * @param memberName
+	 * @param memberGender
+	 * @return result
+	 * @throws Exception
+	 */
+	public int updateMember(Member member) throws Exception{
+
+		// 1. 커넥션 생성
+		Connection conn = getConnection();
+		
+		// 2. DAO 메서드 호출 후 결과 반환 받기
+		int result = dao.updateMember(conn, member);
+
+		//3. 트랜잭션 제어 처리
+		if(result > 0) commit(conn);
+		else rollback(conn);
+		
+		//4. 커넥션 반환 
+		close(conn);
+		
+		return result;
+	}
+
+	/** 4. 비밀번호 변경(현재 비밀번호, 새 비밀번호, 새 비밀번호 확인) 서비스
+	 * @param LoginMember
+	 * @param newPw
+	 * @return result
+	 * @throws Exception
+	 */
+	public int updatePw(int memberNo, String newPw) throws Exception{
+		
+		Connection conn = getConnection();
+		
+		int result = dao.updatePw(conn, memberNo, newPw);
+		
+		if(result > 0) commit(conn);
+		else rollback(conn);
+		
+		close(conn);
+		
+		return result;
+	}
+
+	/** 현재 비밀번호 조회 서비스
+	 * @param LoginMember
+	 * @return memberPw
+	 * @throws Exception
+	 */
+	public String getPw(Member loginMember) throws Exception{
+		
+		Connection conn = getConnection();
+		
+		String memberPw = dao.getPw(conn, loginMember);
+		
+		close(conn);
+		
+		return memberPw;
+	}
+
+	/** 5. 회원 탈퇴 서비스
+	 * @param LoginMember
+	 * @return result
+	 * @throws Exception
+	 */
+	public int secession(int memberNo) throws Exception{
+		
+		Connection conn = getConnection();
+		
+		int result = dao.secession(conn, memberNo);
+		
+		if(result > 0)	commit(conn);
+		else			rollback(conn);
+		
+		close(conn);
+		
+		return result;
+	}
+
+
+
+}
